@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>May 22, 2026</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-main: #f5f5f7;
+            --text-muted: #a1a1a6;
+            --netflix-red: #E50914;
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% -20%, #1a1a24 0%, transparent 50%);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .event-date-heading {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: -10px;
+    letter-spacing: 2px;
+    color: var(--text-main);
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* --- TOP MEDIA SECTION --- */
+        .media-container {
+            max-width: 1200px;
+            margin: 50px auto 30px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        /* 1. Main YouTube-style Viewer */
+        .main-viewer {
+            flex: 3; /* Takes up 3/4 of the width */
+            aspect-ratio: 4 / 3;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 0;
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* 2. Sidebar Thumbnails */
+        .sidebar {
+            flex: 1; /* Takes up 1/4 of the width */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 5px;
+            /* Match the height of the video player dynamically */
+            max-height: calc( (1200px * 0.75) * (3 / 4) ); 
+        }
+
+        /* Custom Scrollbar for Sidebar */
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+
+        .thumb {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            cursor: pointer;
+            opacity: 0.4;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .thumb:hover {
+            opacity: 0.8;
+        }
+
+        /* The Active Glowing Thumbnail */
+        .thumb.active {
+            opacity: 1;
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            transform: scale(0.98); /* Slight click-in effect */
+        }
+
+        /* --- LOWER TEXT CONTENT --- */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 50px 20px;
+            text-align: left; /* Aligned left to match video edges, change to center if preferred */
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            margin: 0 0 15px 0;
+            letter-spacing: 1px;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 800px; /* Keeps reading line-length comfortable */
+        }
+
+        .btn-primary {
+            background-color: var(--netflix-red);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-family: var(--font-body);
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+        }
+
+        .btn-primary:hover {
+            background-color: #f40612;
+            transform: scale(1.05);
+        }
+
+        /* --- MODAL LOGIC (UNCHANGED) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: all; }
+        .modal-box {
+            background: #141414; border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 40px; width: 90%; max-width: 500px;
+            text-align: center; transform: translateY(20px); transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        .modal-box h2 { font-family: var(--font-display); margin-top: 0; font-size: 2rem; }
+        textarea {
+            width: 100%; height: 120px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
+            color: white; font-family: var(--font-body); font-size: 1rem;
+            padding: 15px; box-sizing: border-box; resize: none; margin-bottom: 20px; outline: none;
+        }
+        textarea:focus { border-color: var(--text-muted); }
+        .modal-actions { display: flex; gap: 15px; justify-content: center; }
+        .btn-secondary {
+            background: transparent; color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.3); padding: 12px 25px;
+            font-size: 1rem; border-radius: 4px; cursor: pointer; transition: background 0.2s ease;
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-submit {
+            background-color: var(--text-main); color: black; border: none;
+            padding: 12px 25px; font-size: 1rem; font-weight: 600;
+            border-radius: 4px; cursor: pointer; transition: transform 0.2s ease;
+        }
+        .btn-submit:hover { transform: scale(1.05); }
+
+        /* Responsive fixes for mobile/iPad */
+        @media (max-width: 900px) {
+            .media-container { flex-direction: column; }
+            .sidebar { 
+                flex-direction: row; 
+                overflow-x: auto; 
+                overflow-y: hidden;
+                max-height: none; 
+                padding-bottom: 10px;
+            }
+            .thumb { width: 150px; flex-shrink: 0; }
+            h1 { font-size: 2.2rem; text-align: center; }
+            p.subtitle { text-align: center; }
+            .content-section { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <h2 class="event-date-heading">May 22, 2026</h2>
+<div class="media-container">
+        <div class="main-viewer" id="mainViewer">
+            </div>
+        <div class="sidebar" id="sidebar">
+            </div>
+    </div>
+
+    <div class="content-section">
+        <h1>The Night of a Thousand Tears</h1>
+        <p class="subtitle">Arguably the biggest fights Garima & Saksham ever had.<br>Garima had just found out that Saksham lied about not knowing that she is sad because of their distance. She called and confronted Saksham about this. From a fairy like angel, she changed into an active volcano, full of anger and pure raw rage. Her anger depicted how deeply hurt and shaken she was. Saksham kept his mouth shut and apologised.<br><br>From Garima's Point of View, Saksham was a nice and trustworthy person up until now. She found out the platter of lies he had fed her, to trick her into believing it wasn't his fault for hurting her. It was lack of information, thus winning the Benefit of Doubt.<br><br>From Saksham's Point of View, he was confused. What Garima said made total sense. It was backed by facts too. But he couldnt wrap his head around the fact that he did THIS.<br>He never imagined he would do something like this. In a fleeting moment, he realised the gravity of his mistakes. He was not sure why he did that. He knew that he wasn't the kind of person who would lie and manipulate to win an argument. He insisted that this wasn't him. He even decided to visit a Psychiatrist for this behaviour because this felt like Multiple Personality Disorder to him.<br><br>In the end, Saksham accepted his mistake and Garima wasn't talking to him for obvious reasons. Saksham left for home the next day.</p>
+        <button class="btn-primary" id="openModalBtn">Back to Calendar</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <h2>Few words from you?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Most precious memory of this day?<br>Or perhaps something was missed
+            in this memoir?</p>
+            
+            <form id="memoryForm" action="https://formspree.io/f/maqgajzj" method="POST">
+                <input type="hidden" name="Date" value="26 August 2025">
+                <textarea name="Memory" placeholder="Your answer here..." required></textarea>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="closeModalBtn">Cancel</button>
+                    <button type="submit" class="btn-submit">Submit & Return</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. IMAGES CONFIGURATION ---
+        // Just paste your image links here. You can add as many as you want!
+        const imageList = [
+            "1.png",
+            "2.png",
+            "3.png",
+            "4.png"
+        ];
+
+        // --- 2. SLIDESHOW GENERATION & LOGIC ---
+        const mainViewer = document.getElementById('mainViewer');
+        const sidebar = document.getElementById('sidebar');
+        let currentSlideIndex = 0;
+        let slideInterval;
+
+        // Build the HTML for slides and thumbnails automatically
+        imageList.forEach((imgUrl, index) => {
+            // Create main slide
+            const slideDiv = document.createElement('div');
+            slideDiv.className = index === 0 ? 'slide active' : 'slide';
+            slideDiv.style.backgroundImage = `url('${imgUrl}')`;
+            mainViewer.appendChild(slideDiv);
+
+            // Create sidebar thumbnail
+            const thumbDiv = document.createElement('div');
+            thumbDiv.className = index === 0 ? 'thumb active' : 'thumb';
+            thumbDiv.style.backgroundImage = `url('${imgUrl}')`;
+            
+            // Add click event to thumbnail
+            thumbDiv.addEventListener('click', () => {
+                goToSlide(index);
+                resetInterval(); // Stop the auto-play timer and restart it
+            });
+
+            sidebar.appendChild(thumbDiv);
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const thumbs = document.querySelectorAll('.thumb');
+
+        function goToSlide(index) {
+            // Remove active class from current
+            slides[currentSlideIndex].classList.remove('active');
+            thumbs[currentSlideIndex].classList.remove('active');
+            
+            // Update index
+            currentSlideIndex = index;
+            
+            // Add active class to new
+            slides[currentSlideIndex].classList.add('active');
+            thumbs[currentSlideIndex].classList.add('active');
+
+            // Scroll the sidebar automatically to keep the glowing thumbnail in view
+            // Replace the old scrollIntoView line with this:
+sidebar.scrollTo({
+    left: thumbs[currentSlideIndex].offsetLeft - sidebar.offsetLeft,
+    behavior: 'smooth'
+});
+        }
+
+        function nextSlide() {
+            let nextIndex = (currentSlideIndex + 1) % imageList.length;
+            goToSlide(nextIndex);
+        }
+
+        function startInterval() {
+            slideInterval = setInterval(nextSlide, 4000); // Changes image every 4 seconds
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startInterval();
+        }
+
+        startInterval(); // Begin auto-play
+
+
+        // --- 3. MODAL & FORM LOGIC (UNCHANGED) ---
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const memoryForm = document.getElementById('memoryForm');
+
+        openModalBtn.addEventListener('click', () => modalOverlay.classList.add('show'));
+        closeModalBtn.addEventListener('click', () => modalOverlay.classList.remove('show'));
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.classList.remove('show');
+        });
+
+        memoryForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            const formAction = memoryForm.getAttribute('action');
+            const formData = new FormData(memoryForm);
+
+            if (formAction === "YOUR_FORMSPREE_ENDPOINT" || formAction === "") {
+                window.location.href = "../calendar.html?start=2026-05"; 
+                return;
+            }
+
+            try {
+                await fetch(formAction, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+                window.location.href = "../calendar.html?start=2026-05"; 
+            } catch (error) {
+                alert("Something went wrong saving the message. Taking you home anyway!");
+                window.location.href = "../calendar.html?start=2026-05";
+            }
+        });
+    </script>
+</body>
+</html>
